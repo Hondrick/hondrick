@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Task List with Shop</title>
+    <script>
+        var totalPoints = 0;
+        var taskId = 1;
+        var taskPoints = {}; // Object to store points for each task
+        var itemId = 1;
+
+        function addTask() {
+            var taskList = document.getElementById("taskList");
+            var newTask = document.createElement("li");
+            newTask.setAttribute("id", "task" + taskId);
+            newTask.innerHTML = 'Task ' + taskId + ': <input type="text" placeholder="Enter task name"> - <span id="points' + taskId + '">0 points</span> <button onclick="assignPoints(' + taskId + ')">Assign Points</button> <button id="completeButton' + taskId + '" onclick="completeTask(' + taskId + ')">Complete Task</button> <button onclick="deleteTask(' + taskId + ')">Delete Task</button>';
+            taskList.appendChild(newTask);
+            taskId++;
+        }
+
+        function assignPoints(taskNumber) {
+            var points = prompt("Enter points for Task " + taskNumber);
+            document.getElementById("points" + taskNumber).innerHTML = points + " points";
+        }
+
+        function completeTask(taskNumber) {
+            var points = parseInt(document.getElementById("points" + taskNumber).innerHTML.split(" ")[0]);
+            totalPoints += points;
+            taskPoints[taskNumber] = points; // Store the points for the completed task
+            document.getElementById("points" + taskNumber).innerHTML = "Completed";
+            document.getElementById("bank").innerHTML = "Bank: " + totalPoints + " points";
+            document.getElementById("completeButton" + taskNumber).disabled = true;
+        }
+
+        function deleteTask(taskNumber) {
+            var task = document.getElementById("task" + taskNumber);
+            if (document.getElementById("points" + taskNumber).innerHTML === "Completed") {
+                totalPoints -= taskPoints[taskNumber]; // Subtract the stored points from the total
+                document.getElementById("bank").innerHTML = "Bank: " + totalPoints + " points";
+            }
+            task.parentNode.removeChild(task);
+            delete taskPoints[taskNumber]; // Remove the stored points for the deleted task
+        }
+
+        function addItem() {
+            var itemList = document.getElementById("itemList");
+            var newItem = document.createElement("li");
+            newItem.setAttribute("id", "item" + itemId);
+            newItem.innerHTML = 'Item ' + itemId + ': <input type="text" placeholder="Enter item name"> - Cost: <input type="number" id="cost' + itemId + '" placeholder="Enter cost"> <button onclick="purchaseItem(' + itemId + ')">Purchase</button>';
+            itemList.appendChild(newItem);
+            itemId++;
+        }
+
+        function purchaseItem(itemId) {
+            var cost = parseInt(document.getElementById("cost" + itemId).value);
+            if (totalPoints >= cost) {
+                totalPoints -= cost;
+                document.getElementById("bank").innerHTML = "Bank: " + totalPoints + " points";
+                alert("Item " + itemId + " has been purchased!");
+            } else {
+                alert("Not enough points to purchase this item.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Task List</h2>
+    <ul id="taskList">
+        <!-- Initial task will be added here -->
+    </ul>
+    <button onclick="addTask()">Add Task</button>
+    <h3 id="bank">Bank: 0 points</h3>
+
+    <h2>Shop</h2>
+    <ul id="itemList">
+        <!-- Items will be added here -->
+    </ul>
+    <button onclick="addItem()">Add Item</button>
+
+    <script>
+        // Add the first task on page load
+        addTask();
+    </script>
+</body>
+</html>
